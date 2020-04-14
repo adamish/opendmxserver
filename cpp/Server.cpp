@@ -3,17 +3,17 @@
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
- 
+
   opendmxserver is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
- 
+
   You should have received a copy of the GNU General Public License
   along with opendmxserver.  If not, see <http://www.gnu.org/licenses/>.
-  
+
   (C) Adam Granger 2012
-  
+
 */
 using namespace std;
 #include <stdio.h>
@@ -69,6 +69,12 @@ void Server::connect() {
 		socklen_t clen;
 		int fd = accept(serverfd, (struct sockaddr *)&caddr, &clen);
 
+    // error handling
+		if (fd < 0) {
+        perror("accept");
+        exit(1);
+    }
+
 		if (fd > 0) {
 			char *str = new char[INET_ADDRSTRLEN];
 			cout << "connect client " << endl;
@@ -94,7 +100,11 @@ void Server::connect() {
 					i++;
 				}
 			}
+      // delete mem allocated to str
+      delete[] str;
 		}
+    // done reading from accepted connection, close socket
+    close(fd);
 	}
 }
 
